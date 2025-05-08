@@ -1,17 +1,17 @@
-# Imagen base de ASP.NET
-FROM mcr.microsoft.comdotnetaspnet8.0 AS base
-WORKDIR app
+# Imagen base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
 EXPOSE 10000
 
-# Imagen SDK para compilar
-FROM mcr.microsoft.comdotnetsdk8.0 AS build
-WORKDIR src
+# Imagen de compilación
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
 COPY . .
 RUN dotnet restore
-RUN dotnet publish -c Release -o apppublish
+RUN dotnet publish -c Release -o /app/publish
 
 # Imagen final
 FROM base AS final
-WORKDIR app
-COPY --from=build apppublish .
-ENTRYPOINT [dotnet, SignalR.dll]
+WORKDIR /app
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet", "SignalR.dll"]
